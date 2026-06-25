@@ -1,0 +1,14 @@
+anthropic>=0.25.0
+python-telegram-bot>=20.0
+google-api-python-client>=2.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.0
+gspread>=6.0
+praw>=7.7
+requests>=2.31
+pytrends>=4.9
+feedparser>=6.0
+schedule>=1.2
+python-dotenv>=1.0
+apscheduler>=3.10
+aiohttp>=3.9
