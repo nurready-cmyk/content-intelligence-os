@@ -7,3 +7,4 @@ config/google_credentials.json
 *.xlsx
 *.docx
 ~$*
+config/*.json

@@ -24,7 +24,9 @@ leaders, managers — people who want more freedom, systematic and profitable bu
 to stop being a bottleneck, to make better decisions.
 
 CONTENT PRIORITY WEIGHTS:
-10 — Spiritual principles for life and business
+10 — Life principles, laws of life, spiritual principles for life and business
+     (e.g. "The law of reciprocity", "Why suffering leads to growth", "The paradox of control",
+     "Principles that separate winners from losers", "Ancient wisdom that modern science confirms")
 9  — Unit economics, global research, company stories, success/failure patterns
 8  — Negotiations, artificial intelligence
 7  — Profit, business models
@@ -32,6 +34,14 @@ CONTENT PRIORITY WEIGHTS:
 5  — Leadership
 2  — Franchising
 1  — Coffee business
+
+LIFE PRINCIPLES content angle (Priority 10 — always look for this):
+- Universal laws that govern human behavior, success, wealth, relationships
+- Principles validated by history, philosophy, psychology, and modern science
+- Counterintuitive truths most people never discover
+- Ancient wisdom (Stoicism, Eastern philosophy) applied to modern entrepreneurship
+- "Why" behind success and failure patterns in life and business
+- Formats that work: "The X Laws of...", "Why Y always leads to Z", "The principle that changed everything"
 
 SCORE EACH IDEA on 8 metrics (1–10):
 - Viral Score: probability of views

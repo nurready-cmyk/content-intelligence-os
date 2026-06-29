@@ -16,6 +16,7 @@ from app.engines.intelligence_engine import (
     generate_script,
     score_idea,
     research_topic,
+    get_next_video,
 )
 from app.storage.sheets import save_report, save_script
 
@@ -47,46 +48,29 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 @auth_required
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    help_text = """
-*Available commands:*
-
-*Trends:*
-/trends — top trends (24h)
-/trends7 — trends (7 days)
-/forecast — future trends forecast
-
-*Content:*
-/ideas — top-10 content ideas
-/ideas\_authority — ideas for authority building
-/ideas\_clients — ideas for client attraction
-/ideas\_viral — ideas for maximum views
-/ideas\_english — ideas for English channel
-
-*Analytics:*
-/viral\_patterns — patterns of viral videos
-/titles — best title patterns
-/thumbnails — best thumbnail patterns
-
-*Research:*
-/research [topic] — deep topic research
-/cross [topic] — cross-industry patterns
-
-*Scripts:*
-/script [topic] — full video script
-/hook [topic] — 20 hook variants
-/titles\_gen [topic] — 30 title variants
-/score [idea] — score an idea (8 metrics)
-
-*Personal brand:*
-/authority — how to strengthen authority
-/consulting — topics for client attraction
-/next\_video — next recommended video
-/content\_plan — content plan for the week
-
-*System:*
-/briefing — generate daily briefing now
-/settings — system settings
-"""
+    help_text = (
+        "*Available commands:*\n\n"
+        "*Trends:*\n"
+        "/trends — top trends (24h)\n"
+        "/trends7 — trends (7 days)\n"
+        "/forecast — future trends forecast\n\n"
+        "*Content:*\n"
+        "/ideas — top-10 content ideas\n"
+        "/ideas\\_authority — ideas for authority building\n"
+        "/ideas\\_clients — ideas for client attraction\n"
+        "/ideas\\_viral — ideas for maximum views\n"
+        "/ideas\\_english — ideas for English channel\n\n"
+        "*Research:*\n"
+        "/research [topic] — deep topic research\n"
+        "/cross [topic] — cross-industry patterns\n\n"
+        "*Scripts:*\n"
+        "/script [topic] — full video script\n"
+        "/score [idea] — score an idea (8 metrics)\n\n"
+        "*Personal brand:*\n"
+        "/next\\_video — next recommended video\n\n"
+        "*System:*\n"
+        "/briefing — generate daily briefing now\n"
+    )
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
 
@@ -95,9 +79,24 @@ async def cmd_briefing(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("⏳ Collecting data and generating briefing... (~60 seconds)")
 
     try:
-        youtube_data = collect_all_channels(max_results=5)
-        reddit_data = collect_trending_topics(limit=5)
-        trends_data = get_trending_topics()
+        youtube_data = []
+        reddit_data = []
+        trends_data = []
+
+        try:
+            youtube_data = collect_all_channels(max_results=5)
+        except Exception as e:
+            logger.warning(f"YouTube collection failed: {e}")
+
+        try:
+            reddit_data = collect_trending_topics(limit=5)
+        except Exception as e:
+            logger.warning(f"Reddit collection failed: {e}")
+
+        try:
+            trends_data = get_trending_topics()
+        except Exception as e:
+            logger.warning(f"Trends collection failed: {e}")
 
         briefing = generate_daily_briefing(youtube_data, reddit_data, trends_data)
         save_report(briefing, "daily")
@@ -181,32 +180,8 @@ async def cmd_trends(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @auth_required
 async def cmd_next_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🎯 Calculating your next best video...")
-    from app.engines.intelligence_engine import get_claude_client
-    from config.prompts import MASTER_SYSTEM_PROMPT
-
-    client = get_claude_client()
-    prompt = """
-    Based on the content priority weights and the goal of building an international expert brand,
-    recommend the SINGLE BEST video to shoot right now.
-
-    Provide:
-    1. Topic and title (3 variants)
-    2. Why THIS topic RIGHT NOW (strategic reasoning)
-    3. All 8 scores
-    4. Hook (top-3)
-    5. Key angle that makes it unique
-    6. Estimated impact in 30/90/365 days
-
-    Language: Russian.
-    """
     try:
-        message = client.messages.create(
-            model="claude-opus-4-8",
-            max_tokens=2048,
-            system=MASTER_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        result = message.content[0].text
+        result = get_next_video()
         for chunk in _split_message(result):
             await update.message.reply_text(chunk, parse_mode="Markdown")
     except Exception as e:

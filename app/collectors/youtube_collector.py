@@ -78,8 +78,5 @@ def get_top_comments(video_id: str, max_results: int = 50) -> list[dict]:
 
 
 def collect_all_channels(max_results: int = 5) -> list[dict]:
-    all_videos = []
-    for channel_id in YOUTUBE_CHANNELS:
-        videos = get_recent_videos(channel_id, max_results=max_results)
-        all_videos.extend(videos)
-    return all_videos
+    # YouTube API temporarily disabled — returns empty list until API key is fixed
+    return []
